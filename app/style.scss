@@ -1,0 +1,48 @@
+.container{
+  position: relative;
+  max-width: 1440px;
+  border: 1px solid #ffffff;
+  border-radius: 5px;
+  margin: 30px auto;
+  color: #ffffff;
+  &__center-text{
+    margin: 0 auto;
+    font-size: 30px;
+    text-align: center;
+  }
+  li{
+    list-style-type: none;
+  }
+}
+.container-timetable{
+  color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-flow: column;
+  button{
+    font-weight: bold;
+    background: #ffffff;
+    color: #3c6695;
+    padding: 10px 10px;
+    border: none;
+    outline: none;
+  }
+  li{
+    list-style-type: none;
+    padding-top: 10px;
+    display: flex;
+    flex-flow: column;
+  }
+}
+footer{
+  color: #ffffff;
+  input{
+    padding: 5px 5px;
+    border: none;
+    outline: none;
+  }
+}
+body{
+  background-color: #3c6695;
+}
