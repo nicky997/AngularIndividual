@@ -29,6 +29,7 @@
   padding: 10px 10px;
   border: none;
   outline: none;
+  cursor: pointer;
 }
 .container-timetable li {
   list-style-type: none;

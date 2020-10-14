@@ -20,7 +20,10 @@
 <div class="container">
   <div class="container__center-text" ng-app="" ng-init="TitleText='Расписание троллейбусов'">
     <p><span ng-bind="TitleText"></span></p>
+    <div ng-app="myApp" ng-controller="costCtrl"> Цена поездки на троллейбусе: {{ price | currency:'MDL ' }}</div>
   </div>
+
+</div>
 </div>
 </header>
 
@@ -74,6 +77,7 @@
   <div class="infoabout">
   </div>
 
+
 </footer>
 
   <!-- In production use:
@@ -88,6 +92,9 @@
   <script src="core/version/version.js"></script>
   <script src="core/version/version-directive.js"></script>
   <script src="core/version/interpolate-filter.js"></script>
+
+
+
 <script>
   var app = angular.module("myApp", []);
   app.directive("infoabout", function() {
@@ -97,6 +104,10 @@
               "<p>Наш адрес : Ул. Пушкина, 228</p>" +
               "<p>Наш телефон : 069228228 </p>"
     };
+  });
+  var app = angular.module("myApp", []);
+  app.controller('costCtrl', function($scope) {
+    $scope.price = 2;
   });
 </script>
 </body>
