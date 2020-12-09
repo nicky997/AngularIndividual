@@ -6,109 +6,24 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Расписание троллейбусов</title>
+  <title>My AngularJS App</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css">
   <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css">
   <link rel="stylesheet" href="app.css">
   <script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
 </head>
 <body>
-<header>
-<div class="container">
-  <div class="container__center-text" ng-app="" ng-init="TitleText='Расписание троллейбусов'">
-    <p><span ng-bind="TitleText"></span></p>
-    <div ng-app="myApp" ng-controller="costCtrl"> Цена поездки на троллейбусе: {{ price | currency:'MDL ' }}</div>
-  </div>
-
-</div>
-</div>
-</header>
-
-<div class="container-timetable">
-  <button ng-click="container_timetable=!container_timetable">Показать расписание троллейбусов</button>
-<ul ng-show="container_timetable">
-  <li ng-app="" ng-init="Trolleybus1='Троллейбус №1'"> <span ng-bind="Trolleybus1"></span><span>Интервал: 6-21 Часы работы: 05:47 - 22:28</span></li>
-  <li ng-app="" ng-init="Trolleybus2='Троллейбус №2'"><span ng-bind="Trolleybus2"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus3='Троллейбус №3'"><span ng-bind="Trolleybus3"></span><span>Интервал: 6-23 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus4='Троллейбус №4'"><span ng-bind="Trolleybus4"></span><span>Интервал: 5-11 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus5='Троллейбус №5'"><span ng-bind="Trolleybus5"></span><span>Интервал: 2-7 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus6='Троллейбус №6'"><span ng-bind="Trolleybus6"></span><span>Интервал: 9-24 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus7='Троллейбус №7'"><span ng-bind="Trolleybus7"></span><span>Интервал: 20-30 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus8='Троллейбус №8'"><span ng-bind="Trolleybus8"></span><span>Интервал: 15-25 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus9='Троллейбус №9'"><span ng-bind="Trolleybus9"></span><span>Интервал: 16-28 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus10='Троллейбус №10'"><span ng-bind="Trolleybus10"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus11='Троллейбус №11'"><span ng-bind="Trolleybus11"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus12='Троллейбус №12'"><span ng-bind="Trolleybus12"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus13='Троллейбус №13'"><span ng-bind="Trolleybus13"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus14='Троллейбус №14'"><span ng-bind="Trolleybus14"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus15='Троллейбус №15'"><span ng-bind="Trolleybus15"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus16='Троллейбус №16'"><span ng-bind="Trolleybus16"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus17='Троллейбус №17'"><span ng-bind="Trolleybus17"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus18='Троллейбус №18'"><span ng-bind="Trolleybus18"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus19='Троллейбус №19'"><span ng-bind="Trolleybus19"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus20='Троллейбус №20'"><span ng-bind="Trolleybus20"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus21='Троллейбус №21'"><span ng-bind="Trolleybus21"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus22='Троллейбус №22'"><span ng-bind="Trolleybus22"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus23='Троллейбус №23'"><span ng-bind="Trolleybus23"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus24='Троллейбус №24'"><span ng-bind="Trolleybus24"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus25='Троллейбус №25'"><span ng-bind="Trolleybus25"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus26='Троллейбус №26'"><span ng-bind="Trolleybus26"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus27='Троллейбус №27'"><span ng-bind="Trolleybus27"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus28='Троллейбус №28'"><span ng-bind="Trolleybus28"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus29='Троллейбус №29'"><span ng-bind="Trolleybus29"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus30='Троллейбус №30'"><span ng-bind="Trolleybus30"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus31='Троллейбус №31'"><span ng-bind="Trolleybus31"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus32='Троллейбус №32'"><span ng-bind="Trolleybus32"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus33='Троллейбус №33'"><span ng-bind="Trolleybus33"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus34='Троллейбус №34'"><span ng-bind="Trolleybus34"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus35='Троллейбус №35'"><span ng-bind="Trolleybus35"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus36='Троллейбус №36'"><span ng-bind="Trolleybus36"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-  <li ng-app="" ng-init="Trolleybus37='Троллейбус №37'"><span ng-bind="Trolleybus37"></span><span>Интервал: 3-15 Часы работы: 06:02 - 22:48</span></li>
-</ul>
-</div>
-<footer ng-app="myApp">
-  <input ng-copy="count = count + 1" ng-init="count=0" value="trolleybus-timetable.com" />
-
-  <p>Скопируйте наше расписание и будьте одним из первых наших пользователей. Сегодня данная ссылка была скопирована {{count}} раз.</p>
-  <div
-  <div class="infoabout">
-  </div>
-
-
-</footer>
+  <ul class="menu">
 
   <!-- In production use:
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
   -->
-
   <script src="lib/angular/angular.js"></script>
   <script src="lib/angular-route/angular-route.js"></script>
-  <script src="app.js"></script>
-  <script src="view1/view1.js"></script>
-  <script src="view2/view2.js"></script>
   <script src="core/version/version.js"></script>
   <script src="core/version/version-directive.js"></script>
   <script src="core/version/interpolate-filter.js"></script>
-
-
-
-<script>
-  var app = angular.module("myApp", []);
-  app.directive("infoabout", function() {
-    return {
-      restrict : "C",
-      template : "<h1>Trolleybus Timetable - На рынке уже 20 лет!</h1>" +
-              "<p>Наш адрес : Ул. Пушкина, 228</p>" +
-              "<p>Наш телефон : 069228228 </p>"
-    };
-  });
-  var app = angular.module("myApp", []);
-  app.controller('costCtrl', function($scope) {
-    $scope.price = 2;
-  });
-</script>
 </body>
 </html>
