@@ -1,29 +1,388 @@
-<!DOCTYPE html>
-<!--[if lt IE 7]>      <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html lang="en" ng-app="myApp" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html lang="en" ng-app="myApp" class="no-js"> <!--<![endif]-->
+<!DOCTYPE HTML>
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>My AngularJS App</title>
-  <meta name="description" content="">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/normalize.css">
-  <link rel="stylesheet" href="lib/html5-boilerplate/dist/css/main.css">
-  <link rel="stylesheet" href="app.css">
-  <script src="lib/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Индивидуальная работа</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
-<body>
-  <ul class="menu">
+<body ng-app="app" ng-controller="tickets">
 
-  <!-- In production use:
-  <script src="//ajax.googleapis.com/ajax/libs/angularjs/x.x.x/angular.min.js"></script>
-  -->
-  <script src="lib/angular/angular.js"></script>
-  <script src="lib/angular-route/angular-route.js"></script>
-  <script src="core/version/version.js"></script>
-  <script src="core/version/version-directive.js"></script>
-  <script src="core/version/interpolate-filter.js"></script>
+<div class="container mt-5">
+  <div class="d-flex justify-content-center" ng-hide="isLoggedIn">
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loginModal">
+      Войти
+    </button>
+  </div>
+  <h1 ng-show="isLoggedIn">Привет, {{ username }}</h1>
+  <div class="row mt-4" ng-show="isLoggedIn">
+    <div class="col-md-3">
+      <div class="list-group">
+        <a href="#" ng-click="tab='arrivals'" class="list-group-item list-group-item-action {{ tab == 'arrivals' ? 'active' : '' }}">Прилеты</a>
+        <a href="#" ng-click="tab='departures'" class="list-group-item list-group-item-action {{ tab == 'departures' ? 'active' : '' }}">Вылеты</a>
+        <a href="#" ng-click="tab='checkout'" class="list-group-item list-group-item-action {{ tab == 'checkout' ? 'active' : '' }}">Список желаний</a>
+      </div>
+    </div>
+    <div class="col-md-9">
+      <div ng-show="tab == 'arrivals' || tab == 'departures'">
+        <p>Поиск по номеру рейса или направлению: <input class="form-control" type="text" ng-model="flightSearch" /></p>
+      </div>
+      <div ng-show="tab == 'arrivals'">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Номер рейса</th>
+            <th>Направление</th>
+            <th>Время</th>
+            <th>Статус</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="x in arrivals | filter:flightSearch">
+            <td>{{ x.flight }}</td>
+            <td>{{ x.destination_long | uppercase }} ({{ x.destination_short | uppercase }})</td>
+            <td>{{ x.schedule_time }}</td>
+            <td><span class="{{flights.estimation(x).class}}">{{flights.estimation(x).text}}</span></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div ng-show="tab == 'departures'">
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Номер рейса</th>
+            <th>Направление</th>
+            <th>Время</th>
+            <th>Статус</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="x in departures | filter:flightSearch">
+            <td>{{ x.flight }}</td>
+            <td>{{ x.destination_long | uppercase }} ({{ x.destination_short | uppercase }})</td>
+            <td>{{ x.schedule_time }}</td>
+            <td><span class="{{flights.estimation(x).class}}">{{flights.estimation(x).text}}</span></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div ng-show="tab == 'checkout'">
+        <h5>Баланс: {{ moneyLimit-flights.wishlistSum(wishlist) }}</h5>
+        <h4>Все предложения</h4>
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Номер маршрута</th>
+            <th>Период</th>
+            <th>Цена билета</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="x in wishlist | filter:wishlistNotAddedFilter">
+            <td>{{ x.destination }}</td>
+            <td>{{ x.period }}</td>
+            <td>{{ x.price }}</td>
+            <td><button class="btn btn-sm btn-primary" ng-click="changeWishlist(x.destination, 1)" ng-disabled="flights.sumWillExceed(wishlist, x.destination, moneyLimit)">Добавить</button></td>
+          </tr>
+          </tbody>
+        </table>
+        <h4>Выбранные предложения</h4>
+
+        <table class="table table-bordered">
+          <thead>
+          <tr>
+            <th>Направление</th>
+            <th>Период</th>
+            <th>Цена билета</th>
+            <th>Количество билетов</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr ng-repeat="x in wishlist | filter:wishlistAddedFilter">
+            <td>{{ x.destination }}</td>
+            <td>{{ x.period }}</td>
+            <td>{{ x.price }}</td>
+            <td><button class="btn btn-sm btn-primary" ng-click="changeWishlist(x.destination, -1)">-</button> {{ x.quantity }} <button class="btn btn-sm btn-primary" ng-disabled="flights.sumWillExceed(wishlist, x.destination, moneyLimit)" ng-click="changeWishlist(x.destination, 1)">+</button></td>
+          </tr>
+          </tbody>
+          <tfoot>
+          <tr>
+            <th>Итого</th>
+            <th colspan="3" class="text-right">{{ flights.wishlistSum(wishlist) }}</th>
+          </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" ng-hide="isLoggedIn" data-backdrop="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Вход</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger" ng-show="loginError != ''">{{ loginError }}</div>
+        <form name="form" ng-submit="login()" role="form">
+          <div class="form-group">
+            <label for="username">Логин</label>
+            <i class="fa fa-key"></i>
+            <input type="text" name="username" id="username" class="form-control" ng-model="username" required/>
+          </div>
+          <div class="form-group">
+            <label for="password">Пароль</label>
+            <i class="fa fa-lock"></i>
+            <input type="password" name="password" id="password" class="form-control" ng-model="password" required/>
+          </div>
+          <div class="form-actions text-center">
+            <button type="submit" class="btn btn-primary">Войти</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+<script type="text/javascript">
+  var app = angular.module('app', []);
+  app.service('flights', function() {
+    this.estimation = function(x) {
+      var _class = '';
+      var _text = '';
+      if (x.status == 'estimated') {
+        _class = 'text-success font-weight-bold';
+        _text = 'Ожидается ' + x.estimated_time;
+      }
+      else if (x.status == 'delayed') {
+        _class = 'text-warning font-weight-bold';
+        _text = 'Задерживается ' + x.estimated_time;
+      }
+      else if (x.status == 'cancelled') {
+        _class = 'text-danger font-weight-bold';
+        _text = 'Отменен';
+      }
+      else if (x.status == 'departured') {
+        _class = 'text-success font-weight-bold';
+        _text = 'Вылетел ' + x.estimated_time;
+      }
+      else if (x.status == 'gate_closed') {
+        _class = 'text-secondary font-weight-bold';
+        _text = 'Регистрация закончена';
+      }
+      else if (x.status == 'last_call') {
+        _class = 'text-warning font-weight-bold';
+        _text = 'Регистрация заканчивается';
+      }
+      else if (x.status == 'boarding') {
+        _class = 'text-primary font-weight-bold';
+        _text = 'Посадка';
+      }
+      else if (x.status == 'registration') {
+        _class = 'font-weight-bold';
+        _text = 'Регистрация';
+      }
+      return { class: _class, text: _text };
+    }
+    this.wishlistSum = function(list) {
+      var sum = 0;
+      for (var i = 0; i < list.length; i++) {
+        sum += list[i].quantity * list[i].price;
+      }
+      return sum;
+    }
+    this.sumWillExceed = function(list, destination, max) {
+      var sum = 0;
+      for (var i = 0; i < list.length; i++) {
+        sum += list[i].quantity * list[i].price;
+        if (list[i].destination == destination)
+          sum += list[i].price;
+      }
+      return sum >= max;
+    }
+  });
+  app.controller('tickets', function ($scope, flights) {
+    $scope.isLoggedIn = false;
+    $scope.loginError = '';
+    $scope.tab = 'arrivals';
+    $scope.flights = flights;
+    $scope.moneyLimit = 1000;
+    $scope.login = function () {
+      if ($scope.username.trim() == '') {
+        $scope.isLoggedIn = false;
+        $scope.loginError = 'Логин не может быть пустым';
+      }
+      if ($scope.username == $scope.password) {
+        $scope.isLoggedIn = true;
+        $scope.loginError = '';
+      }
+      else {
+        $scope.isLoggedIn = false;
+        $scope.loginError = 'Неверный пароль (попробуйте такой же пароль, как логин, который вы ввели)';
+      }
+    }
+    $scope.arrivals = [{
+      flight: 'W6 9608',
+      destination_long: 'Dortmund',
+      destination_short: 'DTM',
+      schedule_time: '13:00',
+      estimated_time: '13:14',
+      status: 'estimated'
+    }, {
+      flight: 'B2 819',
+      destination_long: 'Minsk',
+      destination_short: 'MSQ',
+      schedule_time: '13:10',
+      estimated_time: '13:20',
+      status: 'estimated'
+    }, {
+      flight: '9U 172',
+      destination_long: 'Moscow Domodedovo',
+      destination_short: 'DME',
+      schedule_time: '13:30',
+      estimated_time: '14:24',
+      status: 'delayed'
+    },{
+      flight: 'W6 6910',
+      destination_long: 'Memmingen',
+      destination_short: 'FMM',
+      schedule_time: '14:40',
+      estimated_time: '14:24',
+      status: 'estimated'
+    },{
+      flight: '9U 834',
+      destination_long: 'London Stansted',
+      destination_short: 'STN',
+      schedule_time: '14:50',
+      estimated_time: '14:52',
+      status: 'estimated'
+    },{
+      flight: 'W6 3798',
+      destination_long: 'London Luton',
+      destination_short: 'LTN',
+      schedule_time: '15:15',
+      estimated_time: '15:07',
+      status: 'estimated'
+    },{
+      flight: '9U 832',
+      destination_long: 'Dublin',
+      destination_short: 'DUB',
+      schedule_time: '15:30',
+      estimated_time: '',
+      status: 'cancelled'
+    },{
+      flight: 'TK 269',
+      destination_long: 'Istanbul',
+      destination_short: 'IST',
+      schedule_time: '15:45',
+      estimated_time: '15:52',
+      status: 'estimated'
+    }];
+    $scope.departures = [{
+      flight: '9U 833',
+      destination_long: 'London Stansted',
+      destination_short: 'STN',
+      schedule_time: '12:40',
+      estimated_time: '12:42',
+      status: 'departured'
+    },{
+      flight: '9U 171',
+      destination_long: 'Moscow Domodedovo',
+      destination_short: 'DME',
+      schedule_time: '13:00',
+      estimated_time: '',
+      status: 'gate_closed'
+    },{
+      flight: 'W6 3797',
+      destination_long: 'London Luton',
+      destination_short: 'LTN',
+      schedule_time: '13:30',
+      estimated_time: '',
+      status: 'boarding'
+    },{
+      flight: 'B2 820',
+      destination_long: 'Minsk',
+      destination_short: 'MSQ',
+      schedule_time: '13:40',
+      estimated_time: '',
+      status: 'last_call'
+    },{
+      flight: '9U 831',
+      destination_long: 'Dublin',
+      destination_short: 'DUB',
+      schedule_time: '13:55',
+      estimated_time: '',
+      status: 'last_call'
+    },{
+      flight: '9U 863',
+      destination_long: 'Frankfurt',
+      destination_short: 'FRA',
+      schedule_time: '14:50',
+      estimated_time: '',
+      status: 'registration'
+    },{
+      flight: 'TK 270',
+      destination_long: 'Istanbul',
+      destination_short: 'IST',
+      schedule_time: '15:10',
+      estimated_time: '',
+      status: 'registration'
+    },{
+      flight: '9U 9015',
+      destination_long: 'Dalaman',
+      destination_short: 'DLM',
+      schedule_time: '15:40',
+      estimated_time: '',
+      status: 'cancelled'
+    }];
+    $scope.wishlist = [{
+      destination: 'Paris',
+      price: 350,
+      period: '15 октября - 25 октября',
+      quantity: 0
+    },{
+      destination: 'Moscow',
+      price: 150,
+      period: '20 октября - 5 ноября',
+      quantity: 0
+    },{
+      destination: 'Dublin',
+      price: 270,
+      period: '7 ноября - 14 ноября',
+      quantity: 0
+    },{
+      destination: 'London',
+      price: 240,
+      period: '20 ноября - 1 декабря',
+      quantity: 0
+    }];
+    $scope.wishlistAddedFilter = function(x) {
+      return x.quantity > 0;
+    }
+    $scope.wishlistNotAddedFilter = function(x) {
+      return x.quantity == 0;
+    }
+    $scope.changeWishlist = function(destination, delta) {
+      console.log(destination);
+      for (var i = 0; i < $scope.wishlist.length; i++) {
+        if ($scope.wishlist[i].destination == destination) {
+          $scope.wishlist[i].quantity += delta;
+          break;
+        }
+      }
+    }
+  });
+</script>
 </body>
 </html>
