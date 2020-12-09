@@ -6,8 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Индивидуальная работа</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-<body ng-app="app" ng-controller="tickets">
+<body ng-app="app" ng-controller="tickets" style="overflow-y: scroll">
 
 <div class="container mt-5">
   <div class="d-flex justify-content-center" ng-hide="isLoggedIn">
@@ -15,35 +16,32 @@
       Войти
     </button>
   </div>
-  <h1 ng-show="isLoggedIn">Привет, {{ username }}</h1>
+  <h1 ng-show="isLoggedIn">Добро пожаловать на сайт расписания троллейбусов, {{ username }}</h1>
   <div class="row mt-4" ng-show="isLoggedIn">
     <div class="col-md-3">
       <div class="list-group">
-        <a href="#" ng-click="tab='arrivals'" class="list-group-item list-group-item-action {{ tab == 'arrivals' ? 'active' : '' }}">Прилеты</a>
-        <a href="#" ng-click="tab='departures'" class="list-group-item list-group-item-action {{ tab == 'departures' ? 'active' : '' }}">Вылеты</a>
-        <a href="#" ng-click="tab='checkout'" class="list-group-item list-group-item-action {{ tab == 'checkout' ? 'active' : '' }}">Список желаний</a>
+        <a href="#" ng-click="tab='arrivals'" class="list-group-item list-group-item-action {{ tab == 'arrivals' ? 'active' : '' }}">Расписание троллейбусов</a>
+        <a href="#" ng-click="tab='checkout'" class="list-group-item list-group-item-action {{ tab == 'checkout' ? 'active' : '' }}">Проездные</a>
       </div>
     </div>
     <div class="col-md-9">
       <div ng-show="tab == 'arrivals' || tab == 'departures'">
-        <p>Поиск по номеру рейса или направлению: <input class="form-control" type="text" ng-model="flightSearch" /></p>
+        <p>Поиск по номеру троллейбуса или времени: <input class="form-control" type="text" ng-model="flightSearch" /></p>
       </div>
       <div ng-show="tab == 'arrivals'">
         <table class="table table-bordered">
           <thead>
           <tr>
-            <th>Номер рейса</th>
+            <th>Номер троллейбуса</th>
             <th>Направление</th>
             <th>Время</th>
-            <th>Статус</th>
           </tr>
           </thead>
           <tbody>
           <tr ng-repeat="x in arrivals | filter:flightSearch">
-            <td>{{ x.flight }}</td>
-            <td>{{ x.destination_long | uppercase }} ({{ x.destination_short | uppercase }})</td>
+            <td>{{ x.trolleybus }}</td>
+            <td>{{ x.destination_long | uppercase }}</td>
             <td>{{ x.schedule_time }}</td>
-            <td><span class="{{flights.estimation(x).class}}">{{flights.estimation(x).text}}</span></td>
           </tr>
           </tbody>
         </table>
@@ -60,8 +58,8 @@
           </thead>
           <tbody>
           <tr ng-repeat="x in departures | filter:flightSearch">
-            <td>{{ x.flight }}</td>
-            <td>{{ x.destination_long | uppercase }} ({{ x.destination_short | uppercase }})</td>
+            <td>{{ x.trolleybus }}</td>
+            <td>{{ x.destination_long | uppercase }} </td>
             <td>{{ x.schedule_time }}</td>
             <td><span class="{{flights.estimation(x).class}}">{{flights.estimation(x).text}}</span></td>
           </tr>
@@ -69,21 +67,18 @@
         </table>
       </div>
       <div ng-show="tab == 'checkout'">
-        <h5>Баланс: {{ moneyLimit-flights.wishlistSum(wishlist) }}</h5>
         <h4>Все предложения</h4>
         <table class="table table-bordered">
           <thead>
           <tr>
-            <th>Номер маршрута</th>
-            <th>Период</th>
-            <th>Цена билета</th>
+            <th>Вид проездного</th>
+            <th>Цена проездного</th>
             <th></th>
           </tr>
           </thead>
           <tbody>
           <tr ng-repeat="x in wishlist | filter:wishlistNotAddedFilter">
             <td>{{ x.destination }}</td>
-            <td>{{ x.period }}</td>
             <td>{{ x.price }}</td>
             <td><button class="btn btn-sm btn-primary" ng-click="changeWishlist(x.destination, 1)" ng-disabled="flights.sumWillExceed(wishlist, x.destination, moneyLimit)">Добавить</button></td>
           </tr>
@@ -94,16 +89,14 @@
         <table class="table table-bordered">
           <thead>
           <tr>
-            <th>Направление</th>
-            <th>Период</th>
-            <th>Цена билета</th>
-            <th>Количество билетов</th>
+            <th>Вид проездного</th>
+            <th>Цена проездного</th>
+            <th>Количество проездных</th>
           </tr>
           </thead>
           <tbody>
           <tr ng-repeat="x in wishlist | filter:wishlistAddedFilter">
             <td>{{ x.destination }}</td>
-            <td>{{ x.period }}</td>
             <td>{{ x.price }}</td>
             <td><button class="btn btn-sm btn-primary" ng-click="changeWishlist(x.destination, -1)">-</button> {{ x.quantity }} <button class="btn btn-sm btn-primary" ng-disabled="flights.sumWillExceed(wishlist, x.destination, moneyLimit)" ng-click="changeWishlist(x.destination, 1)">+</button></td>
           </tr>
@@ -217,7 +210,7 @@
     $scope.loginError = '';
     $scope.tab = 'arrivals';
     $scope.flights = flights;
-    $scope.moneyLimit = 1000;
+    $scope.moneyLimit = 999999;
     $scope.login = function () {
       if ($scope.username.trim() == '') {
         $scope.isLoggedIn = false;
@@ -233,138 +226,222 @@
       }
     }
     $scope.arrivals = [{
-      flight: 'W6 9608',
-      destination_long: 'Dortmund',
-      destination_short: 'DTM',
-      schedule_time: '13:00',
-      estimated_time: '13:14',
+      trolleybus: '1',
+      destination_long: 'Дурлешть - Сармизежетуса',
+      schedule_time: '05:47 - 22:31',
       status: 'estimated'
     }, {
-      flight: 'B2 819',
-      destination_long: 'Minsk',
-      destination_short: 'MSQ',
-      schedule_time: '13:10',
-      estimated_time: '13:20',
+      trolleybus: '2',
+      destination_long: 'бул. Траян - ул. А. Пушкин',
+      schedule_time: '06:02 - 23:07',
       status: 'estimated'
     }, {
-      flight: '9U 172',
-      destination_long: 'Moscow Domodedovo',
-      destination_short: 'DME',
-      schedule_time: '13:30',
-      estimated_time: '14:24',
+      trolleybus: '3',
+      destination_long: 'ул. Алба-Юлия - ул. Миорица',
+      schedule_time: '06:04 - 21:42',
       status: 'delayed'
     },{
-      flight: 'W6 6910',
-      destination_long: 'Memmingen',
-      destination_short: 'FMM',
-      schedule_time: '14:40',
-      estimated_time: '14:24',
+      trolleybus: '4',
+      destination_long: 'бул. Дачия - ул. Ион Крянгэ',
+      schedule_time: '05:44 - 22:33',
       status: 'estimated'
     },{
-      flight: '9U 834',
-      destination_long: 'London Stansted',
-      destination_short: 'STN',
-      schedule_time: '14:50',
-      estimated_time: '14:52',
+      trolleybus: '5',
+      destination_long: 'Троллейбусный парк №2 - ул. Барьера Скулень',
+      schedule_time: '05:19 - 22:29',
       status: 'estimated'
     },{
-      flight: 'W6 3798',
-      destination_long: 'London Luton',
-      destination_short: 'LTN',
-      schedule_time: '15:15',
-      estimated_time: '15:07',
+      trolleybus: '7',
+      destination_long: 'ул. Узинелор - ул. 31 Августа 1989',
+      schedule_time: '05:44 - 22:16',
       status: 'estimated'
     },{
-      flight: '9U 832',
-      destination_long: 'Dublin',
-      destination_short: 'DUB',
-      schedule_time: '15:30',
-      estimated_time: '',
+      trolleybus: '8',
+      destination_long: 'бул. Траян - Ресторан "Бутояш"',
+      schedule_time: '05:52 - 01:00',
       status: 'cancelled'
     },{
-      flight: 'TK 269',
-      destination_long: 'Istanbul',
-      destination_short: 'IST',
-      schedule_time: '15:45',
-      estimated_time: '15:52',
+      trolleybus: '9',
+      destination_long: 'Юго-Западный Автовокзал - Северный Автовокзал',
+      schedule_time: '06:07 - 23:08',
       status: 'estimated'
-    }];
+    },{
+        trolleybus: '10',
+        destination_long: 'бул. Москова - ул. Миорица',
+        schedule_time: '05:51 - 22:40',
+        status: 'estimated'
+    },{
+        trolleybus: '11',
+        destination_long: 'бул. Москова - Парк "Ля Извор"',
+        schedule_time: '06:02 - 19:22',
+        status: 'estimated'
+    },{
+      trolleybus: '12',
+      destination_long: 'бул. Мирча чел Бэтрын - Государственный университет',
+      schedule_time: '05:36 - 22:35',
+      status: 'estimated'
+    },{
+      trolleybus: '13',
+      destination_long: 'бул. Мирча чел Бэтрын - ул. В. Докучаев',
+      schedule_time: '05:41 - 21:57',
+      status: 'estimated'
+    },{
+      trolleybus: '16',
+      destination_long: 'Ассоциация "Beton Armat" - ул. 31 Августа 1989',
+      schedule_time: '06:03 - 22:24',
+      status: 'estimated'
+    },{
+      trolleybus: '17',
+      destination_long: 'Юго-Западный автовокзал - Железнодорожный вокзал',
+      schedule_time: '05:51 - 23:13',
+      status: 'estimated'
+    },{
+      trolleybus: '20',
+      destination_long: 'Троллейбусный парк №2 - ул. В. Докучаев',
+      schedule_time: '05:17 - 22:43',
+      status: 'estimated'
+    },{
+      trolleybus: '21',
+      destination_long: 'ул. Мештерул Маноле - ул. Алба-Юлия',
+      schedule_time: '05:47 - 22:24',
+      status: 'estimated'
+    },{
+      trolleybus: '22',
+      destination_long: 'ул. Алба-Юлия - бул. Дачия',
+      schedule_time: '05:23 - 00:06',
+      status: 'estimated'
+    },{
+      trolleybus: '23',
+      destination_long: 'Мирча чел Бэтрын - Парк "Ля Извор"',
+      schedule_time: '05:32 - 19:54',
+      status: 'estimated'
+    },{
+      trolleybus: '24',
+      destination_long: 'бул. Мирча чел Бэтрын - ул. Миорица',
+      schedule_time: '05:36 - 00:30',
+      status: 'estimated'
+    },{
+      trolleybus: '25',
+      destination_long: 'бул. Чеукарь - ул. 31 Августа 1989',
+      schedule_time: '05:47 - 22:38',
+      status: 'estimated'
+    },{
+      trolleybus: '26',
+      destination_long: 'ул. Чеукарь - ул. Мирча чел Бэтрын',
+      schedule_time: '06:37 - 19:00',
+      status: 'estimated'
+    },{
+      trolleybus: '27',
+      destination_long: 'ул. Чеукарь - ул. Ион Крянгэ',
+      schedule_time: '06:39 - 19:29',
+      status: 'estimated'
+    },{
+      trolleybus: '29',
+      destination_long: 'Аграрный университет - Сквер "Стефан чел Маре ши Сфынт"',
+      schedule_time: '05:50 - 20:36',
+      status: 'estimated'
+    },{
+      trolleybus: '30',
+      destination_long: 'ул. 31 Августа 1989 - Аэропорт',
+      schedule_time: '06:07 - 23:10',
+      status: 'estimated'
+    },{
+      trolleybus: '31',
+      destination_long: 'ул. 31 Августа 1989 - Сынжера',
+      schedule_time: '05:45 - 21:43',
+      status: 'estimated'
+    },{
+      trolleybus: '32',
+      destination_long: 'с. Ставчены - ул. 31 Августа 1989',
+      schedule_time: '06:00 - 22:00',
+      status: 'estimated'
+    },{
+      trolleybus: '34',
+      destination_long: 'ул. Чуфуля - с. Трушень',
+      schedule_time: '06:11 - 21:30',
+      status: 'estimated'
+    },{
+      trolleybus: '35',
+      destination_long: 'пос. Дурлешть - ул. Букурешти',
+      schedule_time: '06:08 - 21:46',
+      status: 'estimated'
+    },{
+      trolleybus: '36',
+      destination_long: 'пос. Яловены - Кишинев',
+      schedule_time: '06:08 - 21:46',
+      status: 'estimated'
+    },{
+      trolleybus: '37',
+      destination_long: 'Примэрия Бубуечь - Железнодорожный вокзал',
+      schedule_time: '06:07 - 21:31',
+      status: 'estimated'
+    },
+    ];
     $scope.departures = [{
-      flight: '9U 833',
+      trolleybus: '9U 833',
       destination_long: 'London Stansted',
       destination_short: 'STN',
       schedule_time: '12:40',
-      estimated_time: '12:42',
       status: 'departured'
     },{
-      flight: '9U 171',
+      trolleybus: '9U 171',
       destination_long: 'Moscow Domodedovo',
       destination_short: 'DME',
       schedule_time: '13:00',
-      estimated_time: '',
       status: 'gate_closed'
     },{
-      flight: 'W6 3797',
+      trolleybus: 'W6 3797',
       destination_long: 'London Luton',
       destination_short: 'LTN',
       schedule_time: '13:30',
-      estimated_time: '',
+
       status: 'boarding'
     },{
-      flight: 'B2 820',
+      trolleybus: 'B2 820',
       destination_long: 'Minsk',
       destination_short: 'MSQ',
       schedule_time: '13:40',
-      estimated_time: '',
       status: 'last_call'
     },{
-      flight: '9U 831',
+      trolleybus: '9U 831',
       destination_long: 'Dublin',
       destination_short: 'DUB',
       schedule_time: '13:55',
-      estimated_time: '',
       status: 'last_call'
     },{
-      flight: '9U 863',
+      trolleybus: '9U 863',
       destination_long: 'Frankfurt',
       destination_short: 'FRA',
       schedule_time: '14:50',
-      estimated_time: '',
       status: 'registration'
     },{
-      flight: 'TK 270',
+      trolleybus: 'TK 270',
       destination_long: 'Istanbul',
       destination_short: 'IST',
       schedule_time: '15:10',
-      estimated_time: '',
       status: 'registration'
     },{
-      flight: '9U 9015',
+      trolleybus: '9U 9015',
       destination_long: 'Dalaman',
       destination_short: 'DLM',
       schedule_time: '15:40',
-      estimated_time: '',
       status: 'cancelled'
     }];
     $scope.wishlist = [{
-      destination: 'Paris',
-      price: 350,
-      period: '15 октября - 25 октября',
+      destination: 'Для студентов и учащихся',
+      price: 70,
       quantity: 0
     },{
-      destination: 'Moscow',
-      price: 150,
-      period: '20 октября - 5 ноября',
+      destination: 'Для студентов из неблагополучных семей',
+      price: 50,
       quantity: 0
     },{
-      destination: 'Dublin',
-      price: 270,
-      period: '7 ноября - 14 ноября',
+      destination: 'Для физических лиц',
+      price: 180,
       quantity: 0
     },{
-      destination: 'London',
-      price: 240,
-      period: '20 ноября - 1 декабря',
+      destination: 'Для экономических агентов',
+      price: 320,
       quantity: 0
     }];
     $scope.wishlistAddedFilter = function(x) {
